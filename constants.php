@@ -1,0 +1,27 @@
+<?php
+/**
+ * Plugin Constants
+ */
+
+// Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
+
+// Plugin Folder Path
+if ( ! defined( 'WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_DIR' ) ) {
+	define( 'WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_DIR', plugin_dir_path( WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_FILE ) );
+} // end if;
+
+// Plugin Folder URL
+if ( ! defined( 'WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_URL' ) ) {
+	define( 'WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_URL', plugin_dir_url( WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_FILE ) );
+} // end if;
+
+// Plugin Root File
+if ( ! defined( 'WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_BASENAME' ) ) {
+	define( 'WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_BASENAME', plugin_basename( WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_FILE ) );
+} // end if;
+
+//Plugin Name
+if ( ! defined( 'WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_NAME' ) ) {
+	define( 'WOOCOMMERCE_TOKENS_PAYMENT_GATEWAY_PLUGIN_NAME', 'NFT MEMBERSHIPS' );
+} // end if;

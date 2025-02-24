@@ -1,0 +1,11 @@
+{
+  "config": {
+    "vendor-dir": "dependencies",
+    "preferred-install": "dist"
+  },
+  "require": {
+    "pablo-sg-pacheco/wp-namespace-autoloader": "dev-master",
+    "phpseclib/phpseclib": "^3.0",
+    "kucrut/vite-for-wp": "^0.9.3"
+  }
+}
