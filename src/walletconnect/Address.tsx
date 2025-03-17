@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 
-import {useAccount, WagmiProvider} from 'wagmi'
+import {useAccount} from 'wagmi'
 
 export function Address() {
     const { address, isConnecting, isDisconnected } = useAccount()

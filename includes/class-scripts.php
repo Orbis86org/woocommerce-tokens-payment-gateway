@@ -286,6 +286,8 @@ class Scripts {
 			woocommerce_tokens_payment_gateway_get_version(),
 			false
 		);
+
+		$this->enqueue_default_frontend_scripts();
 	}
 
 } // end class Scripts;

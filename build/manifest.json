@@ -1,0 +1,65 @@
+{
+  "node_modules/@walletconnect/modal-ui/dist/index.js": {
+    "file": "assets/index-brUwANmp.js",
+    "name": "index",
+    "src": "node_modules/@walletconnect/modal-ui/dist/index.js",
+    "isDynamicEntry": true,
+    "imports": [
+      "src/index.tsx"
+    ]
+  },
+  "src/index.tsx": {
+    "file": "assets/index-BB9c1nqA.js",
+    "name": "index",
+    "src": "src/index.tsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "node_modules/@walletconnect/modal-ui/dist/index.js"
+    ],
+    "css": [
+      "assets/index-dcxY6V3Y.css"
+    ],
+    "assets": [
+      "assets/hashpack-icon-i8W6-Voh.png",
+      "assets/hashpack-CgBoZ4ex.svg",
+      "assets/kabila-logo-B-epCy7U.svg",
+      "assets/saucerswapv1-BVwkcNDp.ico",
+      "assets/saucerswapv2-YIHqRQGV.png",
+      "assets/hsuite-sCXTqMo8.png",
+      "assets/pangolin-CoyPtIhH.png",
+      "assets/heliswap-DGoLD4sy.png"
+    ]
+  },
+  "src/saucerswap/etaswap/assets/img/hashpack-icon.png": {
+    "file": "assets/hashpack-icon-i8W6-Voh.png",
+    "src": "src/saucerswap/etaswap/assets/img/hashpack-icon.png"
+  },
+  "src/saucerswap/etaswap/assets/img/hashpack.svg": {
+    "file": "assets/hashpack-CgBoZ4ex.svg",
+    "src": "src/saucerswap/etaswap/assets/img/hashpack.svg"
+  },
+  "src/saucerswap/etaswap/assets/img/heliswap.png": {
+    "file": "assets/heliswap-DGoLD4sy.png",
+    "src": "src/saucerswap/etaswap/assets/img/heliswap.png"
+  },
+  "src/saucerswap/etaswap/assets/img/hsuite.png": {
+    "file": "assets/hsuite-sCXTqMo8.png",
+    "src": "src/saucerswap/etaswap/assets/img/hsuite.png"
+  },
+  "src/saucerswap/etaswap/assets/img/kabila-logo.svg": {
+    "file": "assets/kabila-logo-B-epCy7U.svg",
+    "src": "src/saucerswap/etaswap/assets/img/kabila-logo.svg"
+  },
+  "src/saucerswap/etaswap/assets/img/pangolin.png": {
+    "file": "assets/pangolin-CoyPtIhH.png",
+    "src": "src/saucerswap/etaswap/assets/img/pangolin.png"
+  },
+  "src/saucerswap/etaswap/assets/img/saucerswapv1.ico": {
+    "file": "assets/saucerswapv1-BVwkcNDp.ico",
+    "src": "src/saucerswap/etaswap/assets/img/saucerswapv1.ico"
+  },
+  "src/saucerswap/etaswap/assets/img/saucerswapv2.png": {
+    "file": "assets/saucerswapv2-YIHqRQGV.png",
+    "src": "src/saucerswap/etaswap/assets/img/saucerswapv2.png"
+  }
+}

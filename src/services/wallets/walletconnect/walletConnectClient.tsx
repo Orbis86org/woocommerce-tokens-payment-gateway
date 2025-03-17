@@ -1,16 +1,22 @@
-import { WalletConnectContext } from "../../../contexts/WalletConnectContext";
-import { useCallback, useContext, useEffect } from 'react';
-import { WalletInterface } from "../walletInterface";
-import { AccountId, ContractExecuteTransaction, ContractId, LedgerId, TokenAssociateTransaction, TokenId, Transaction, TransactionId, TransferTransaction, Client } from "@hashgraph/sdk";
-import { ContractFunctionParameterBuilder } from "../contractFunctionParameterBuilder";
-import { appConfig } from "../../../config";
-import { SignClientTypes } from "@walletconnect/types";
+import {WalletConnectContext} from "../../../contexts/WalletConnectContext";
+import {useCallback, useContext, useEffect} from 'react';
+import {WalletInterface} from "../walletInterface";
 import {
-  HederaSessionEvent,
-  HederaJsonRpcMethod,
-  DAppConnector,
-  HederaChainId,
-} from '@hashgraph/hedera-wallet-connect'
+    AccountId,
+    Client,
+    ContractExecuteTransaction,
+    ContractId,
+    Hbar,
+    HbarUnit,
+    LedgerId,
+    TokenAssociateTransaction,
+    TokenId,
+    TransferTransaction
+} from "@hashgraph/sdk";
+import {ContractFunctionParameterBuilder} from "../contractFunctionParameterBuilder";
+import {appConfig} from "../../../config";
+import {SignClientTypes} from "@walletconnect/types";
+import {DAppConnector, HederaChainId, HederaJsonRpcMethod, HederaSessionEvent,} from '@hashgraph/hedera-wallet-connect'
 import EventEmitter from "events";
 import eventBus from "../../../eventBus"
 
@@ -115,35 +121,80 @@ export const openWalletConnectModal = async () => {
 };
 
 class WalletConnectWallet implements WalletInterface {
-  private getSigner() {
+  public getSigner() {
     if (dAppConnector.signers.length === 0) {
       throw new Error('No signers found!');
     }
     return dAppConnector.signers[0];
   }
 
-  private getAccountId() {
+  public getAccountId() {
     // Need to convert from walletconnect's AccountId to hashgraph/sdk's AccountId because walletconnect's AccountId and hashgraph/sdk's AccountId are not the same!
     return AccountId.fromString(this.getSigner().getAccountId().toString());
   }
 
-  async transferHBAR(toAddress: AccountId, amount: number) {
-    const transferHBARTransaction = new TransferTransaction()
-        .addHbarTransfer(this.getAccountId(), -amount)
-        .addHbarTransfer(toAddress, amount);
+  async transferHBAR(toAddress: AccountId, amount: number, returnRawTransaction = false ) {
+   const transferHBARTransaction = new TransferTransaction()
+        // .setNodeAccountIds(  [ new AccountId(3) ] )
+        .addHbarTransfer(this.getAccountId(), new Hbar(-amount, HbarUnit.Hbar)) // Sender
+        .addHbarTransfer(toAddress, new Hbar(amount, HbarUnit.Hbar)); // Receiver
+
+    if( returnRawTransaction ){
+      return transferHBARTransaction;
+    }
 
     const signer = this.getSigner();
-    await transferHBARTransaction.freezeWithSigner(signer);
-    const txResult = await transferHBARTransaction.executeWithSigner(signer);
 
-    console.log('txResult: ', txResult );
-    return txResult ? txResult.transactionId : null;
+    try {
+      // Freeze and sign
+      await transferHBARTransaction.freezeWithSigner(signer);
+      console.log("Transaction frozen successfully");
+
+      // Execute transaction
+      const txResult = await transferHBARTransaction.executeWithSigner(signer);
+      console.log("Transaction executed, txResult:", txResult);
+      console.log('Executed Transaction: ', txResult.toString() );
+
+      return txResult ? txResult.transactionId : null;
+    } catch (error) {
+      console.error("Error executing transaction:", error);
+      return null;
+    }
   }
 
-  async transferFungibleToken(toAddress: AccountId, tokenId: TokenId, amount: number) {
+
+  async executeTransaction( transaction ){
+    const signer = this.getSigner();
+
+    try {
+      // Freeze and sign
+      await transaction.freezeWithSigner(signer);
+      console.log("Transaction frozen successfully");
+
+      const signedTx = await signer.signTransaction(transaction);
+      console.log("Signed Transaction:", signedTx);
+
+      // Execute transaction
+      const txResult = await transaction.executeWithSigner(signer);
+      console.log("Transaction executed, txResult:", txResult);
+      console.log('Executed Transaction: ', txResult.toString() );
+
+      return txResult ? txResult.transactionId : null;
+    } catch (error) {
+      console.error("Error executing transaction:", error);
+      return null;
+    }
+  }
+
+
+  async transferFungibleToken(toAddress: AccountId, tokenId: TokenId, amount: number, returnRawTransaction = false ) {
     const transferTokenTransaction = new TransferTransaction()
         .addTokenTransfer(tokenId, this.getAccountId(), -amount)
         .addTokenTransfer(tokenId, toAddress.toString(), amount);
+
+    if( returnRawTransaction ){
+      return transferTokenTransaction;
+    }
 
     const signer = this.getSigner();
     await transferTokenTransaction.freezeWithSigner(signer);

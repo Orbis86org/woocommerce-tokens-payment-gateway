@@ -1,19 +1,16 @@
 import {
-    ContractFunctionParameters,
-    ContractExecuteTransaction,
-    AccountAllowanceApproveTransaction,
-    AccountUpdateTransaction,
-    HbarUnit,
-    EntityIdHelper,
-    Client,
     AccountId,
+    Client,
+    ContractExecuteTransaction,
+    ContractFunctionParameters,
+    ContractId,
+    EntityIdHelper,
     PrivateKey,
-    TransactionId,
-    TransactionReceiptQuery, TokenId, ContractId, //for token auto-association
+    TokenId,
+    TransactionReceiptQuery,
 } from '@hashgraph/sdk';
 import axios from "axios";
 import * as ethers from 'ethers';
-import Hbar = HbarUnit.Hbar; //V6
 import BigNumber from 'bignumber.js';
 
 /**

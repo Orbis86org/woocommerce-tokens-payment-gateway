@@ -2,7 +2,7 @@
 // And we want the string contract function params that ethers exepects
 // This is an opportunity for the adapter pattern.
 
-import { ContractFunctionParameters } from "@hashgraph/sdk";
+import {ContractFunctionParameters} from "@hashgraph/sdk";
 
 export interface ContractFunctionParameterBuilderParam {
   type: string;

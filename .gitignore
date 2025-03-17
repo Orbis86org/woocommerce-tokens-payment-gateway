@@ -1,5 +1,4 @@
 /node_modules
-/vendor
-/dependencies
+/src/saucerswap/etaswap
 composer.lock
 package-lock.json

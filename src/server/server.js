@@ -5,26 +5,35 @@
  * If you get '/usr/bin/env: node: No such file or directory' error check out https://support.cpanel.net/hc/en-us/articles/360053317733-Adding-NodeJS-to-your-PATH
  */
 
-import express from "express";
-import bodyParser from "body-parser";
-import path from "path";
-import http from "https";
-import https from "https";
-import fs from "fs";
-import axios from "axios";
-import fetch from "node-fetch";
-import request from "request";
-import crypto from "crypto";
-import cors from "cors";
-import 'dotenv/config'
+import express from 'express';
+import bodyParser from 'body-parser';
+import path from 'path';
+import https from 'https';
+import fs from 'fs';
+import axios from 'axios';
+import crypto from 'crypto';
+import cors from 'cors';
+import 'dotenv/config';
 
 import { fileURLToPath } from 'url';
 import jwt from 'jsonwebtoken';
-import { SecretManagerServiceClient } from '@google-cloud/secret-manager';
 import sharp from 'sharp';
-import { createCanvas, loadImage, registerFont  } from 'canvas';
-import { S3Client, CreateBucketCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-import { v4 as uuid } from 'uuid';
+import { createCanvas, loadImage, registerFont } from 'canvas';
+/**
+ * Hedera Tutorial
+ */
+import {
+	AccountAllowanceApproveTransaction,
+	AccountId,
+	Client,
+	Hbar,
+	HbarUnit,
+	NftId,
+	PrivateKey,
+	TokenId,
+	TransactionId,
+	TransferTransaction,
+} from '@hashgraph/sdk';
 
 /**
  * Resolve 'ReferenceError: __dirname is not defined in ES module scope'
@@ -35,21 +44,6 @@ import { v4 as uuid } from 'uuid';
  */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-/**
- * Hedera Tutorial
- */
-import {
-	AccountAllowanceApproveTransaction,
-	AccountBalanceQuery,
-	AccountId,
-	Client, Hbar, HbarUnit,
-	PrivateKey,
-	TokenAssociateTransaction, Transaction,
-	TransactionId, TransactionReceipt,
-	TransferTransaction,
-	NftId, TokenAllowance, TokenId
-} from '@hashgraph/sdk';
 
 // Bearer token access token secret
 const accessTokenSecret = 'qxHSVy5Gs6gDkfd';

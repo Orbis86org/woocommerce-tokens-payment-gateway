@@ -1,11 +1,15 @@
-import { AccountId, ContractId, TokenId, TransactionId } from "@hashgraph/sdk";
-import { ContractFunctionParameterBuilder } from "./contractFunctionParameterBuilder";
+import {AccountId, ContractId, TokenId, TransactionId, TransferTransaction} from "@hashgraph/sdk";
+import {ContractFunctionParameterBuilder} from "./contractFunctionParameterBuilder";
 
 export interface WalletInterface {
-  executeContractFunction: (contractId: ContractId, functionName: string, functionParameters: ContractFunctionParameterBuilder, gasLimit: number) => Promise<TransactionId | string | null>;
+  getAccountId: () => AccountId;
+  getSigner: () => any;
+  signAndFreezeTransaction: () => any;
+  executeTransaction: () => any;
+  executeContractFunction: (contractId: ContractId, functionName: string, functionParameters: ContractFunctionParameterBuilder, gasLimit: number) => Promise<TransactionId | TransferTransaction | string | null>;
   disconnect: () => void;
-  transferHBAR: (toAddress: AccountId, amount: number) => Promise<TransactionId | string | null>;
-  transferFungibleToken: (toAddress: AccountId, tokenId: TokenId, amount: number) => Promise<TransactionId | string | null>;
+  transferHBAR: (toAddress: AccountId, amount: number, returnRawTransaction: boolean) => Promise<TransactionId | string | null>;
+  transferFungibleToken: (toAddress: AccountId, tokenId: TokenId, amount: number, returnRawTransaction: boolean ) => Promise<TransactionId | string | null>;
   transferNonFungibleToken: (toAddress: AccountId, tokenId: TokenId, serialNumber: number) => Promise<TransactionId | string | null>;
   associateToken: (tokenId: TokenId) => Promise<TransactionId | string | null>;
 }
