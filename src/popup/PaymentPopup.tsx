@@ -52,7 +52,9 @@ export function PaymentPopup({ open, handleClose }) {
     let network = window.wtpg_price_formatter_params.network;
     let swapToken = window.wtpg_price_formatter_params.swap_token == 'yes';
 
-    
+    const client = Client.forTestnet()
+    client.setOperator( '0.0.2491584', PrivateKey.fromString('302e020100300506032b6570042204203c12b68de46c9e980adef66bb31a6b188b467f145c352faa6aa6ae2242b7c2de') )
+
 
     if (network === 'mainnet') {
         quoterV2ContractAddress = '0.0.3949424';

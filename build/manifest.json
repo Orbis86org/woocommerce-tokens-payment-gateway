@@ -1,6 +1,6 @@
 {
   "node_modules/@walletconnect/modal-ui/dist/index.js": {
-    "file": "assets/index-brUwANmp.js",
+    "file": "assets/index-BTqz_6ma.js",
     "name": "index",
     "src": "node_modules/@walletconnect/modal-ui/dist/index.js",
     "isDynamicEntry": true,
@@ -9,7 +9,7 @@
     ]
   },
   "src/index.tsx": {
-    "file": "assets/index-BB9c1nqA.js",
+    "file": "assets/index-DQYEKfrY.js",
     "name": "index",
     "src": "src/index.tsx",
     "isEntry": true,

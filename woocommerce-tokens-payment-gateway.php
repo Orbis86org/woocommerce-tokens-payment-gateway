@@ -13,7 +13,8 @@
  * Network:           false
  * Requires WP:        5.4
  * Requires PHP:       7.4
- * Tested up to:       6.3.1
+ * Tested up to:       6.8.1
+ * Requires Plugins:   woocommerce
  */
 
 use WooCommerce_Tokens_Payment_Gateway\WooCommerce_Tokens_Payment_Gateway;

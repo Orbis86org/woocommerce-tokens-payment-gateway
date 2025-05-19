@@ -33,7 +33,10 @@ class Widgets {
 			),
 		);
 		// This can be: orders, customers, stock or taxes, based on where we want to insert our new reports page
-		$reports['orders']['reports'] = array_merge( $reports['orders']['reports'], $sales_by_country);
+      if( $reports && isset( $reports['orders']['reports'] )  ){
+	      $reports['orders']['reports'] = array_merge( $reports['orders']['reports'], $sales_by_country);
+      }
+
 		return $reports;
 
 	}
@@ -67,6 +70,17 @@ class Widgets {
 					chart: { type: "bar", toolbar: false },
 					series: [{ name: "Orders", data: chartData["2024"] }],
 					xaxis: { categories: ["Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept", "Oct", "Nov", "Dec"] },
+					tooltip: {
+						enabled: true,
+						custom: function({ series, seriesIndex, dataPointIndex, w }) {
+							var orders = series[0][dataPointIndex];
+							var totalAmount = 500;
+							var month = w.config.xaxis.categories[dataPointIndex];
+							return '<div class="apexcharts-tooltip-title">Month: ' + month + '</div>' +
+								'<div>Orders: ' + orders + '</div>' +
+								'<div>Total Amount: $' + totalAmount.toFixed(2) + '</div>';
+						}
+					}
 				}
 
 				var chart = new ApexCharts(document.querySelector("#wctg-total-orders-chart"), options);

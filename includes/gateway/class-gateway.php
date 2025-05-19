@@ -61,7 +61,10 @@ class Gateway extends WC_Payment_Gateway {
 		// Add the gateway to WooCommerce gateways list
 		add_filter( 'woocommerce_payment_gateways', [ $this, 'add_gateway_to_woocommerce_gateway_list' ], 10, 1 );
 
-		// Save settings hook
+    // Validate SaucerSwap API Key
+	  add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'validate_saucerswap_api_key' ] );
+
+	  // Save settings hook
 		add_action( 'woocommerce_update_options_payment_gateways_' . $this->id, [ $this, 'process_admin_options' ] );
 
 		// API callback handler
@@ -139,6 +142,7 @@ class Gateway extends WC_Payment_Gateway {
 			[
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 				'nonce'    => wp_create_nonce( 'wctg_get_supported_tokens' ),
+		'api_key_saved'  => ! empty( $this->get_option( 'saucerswap_api_key', '' ) ),
 			]
 		);
 	}
@@ -202,6 +206,13 @@ class Gateway extends WC_Payment_Gateway {
 				'desc_tip'    => true,
 				'default'     => $this->get_option( 'wallet_connect_project_id' ),
 			],
+	  'saucerswap_api_key' => [
+		  'title'       => __( 'SaucerSwap API Key', 'woocommerce-tokens-payment-gateway' ),
+		  'type'        => 'text',
+		  'description' => __( 'This API Key is used to authenticate with SaucerSwap.', 'woocommerce-tokens-payment-gateway' ),
+		  'desc_tip'    => true,
+		  'default'     => $this->get_option( 'saucerswap_api_key' ),
+	  ],
 			'hedera_account_id' => [
 				'title'       => __( "Store's Hedera Account ID", 'woocommerce-tokens-payment-gateway' ),
 				'type'        => 'text',
@@ -348,7 +359,7 @@ class Gateway extends WC_Payment_Gateway {
 			return $button;
 		}
 
-		return '<button id="renderButton" class="button">Make Payment</button>';
+		return '<span id="renderButton"><button id="place_order" class="button">Make Payment</button></span>';
 	}
 
 	/**
@@ -504,7 +515,7 @@ class Gateway extends WC_Payment_Gateway {
 	 *
 	 * @return bool|WP_Error True if successful, otherwise a WP_Error object
 	 */
-	public function process_refund( $order_id, $amount = null, $reason = '' ): WP_Error|bool {
+	public function process_refund( $order_id, $amount = null, $reason = '' ){
 		$order = wc_get_order( $order_id );
 		$order_data = $this->get_order_payment_data( $order_id );
 
@@ -567,6 +578,35 @@ class Gateway extends WC_Payment_Gateway {
 			'payment_network'    => get_post_meta( $order_id, 'wctg_payment_network', true ),
 		];
 	}
+
+	/**
+	 * Validate SaucerSwap API key on settings save
+	 */
+	public function validate_saucerswap_api_key() {
+		$api_key = $this->get_option( 'saucerswap_api_key', '' );
+		if ( empty( $api_key ) ) {
+			// \WC_Admin_Settings::add_error( __( 'SaucerSwap API key is required to fetch tokens.', 'woocommerce-tokens-payment-gateway' ) );
+			return;
+		}
+
+	  $is_testnet = 'yes' === $this->get_option( 'testnet', 'no' );
+	  $network = $is_testnet ? 'testnet' : 'mainnet';
+	  $endpoint = $network === 'testnet' ? 'https://test-api.saucerswap.finance/tokens' : 'https://api.saucerswap.finance/tokens';
+
+		$response = wp_remote_get( $endpoint, [
+			'headers' => [
+				'x-api-key' => $api_key,
+			],
+			'timeout' => 30,
+		] );
+
+		$code = wp_remote_retrieve_response_code( $response );
+
+		if ( is_wp_error( $response ) || $code === 401 || $code === 403 ) {
+			\WC_Admin_Settings::add_error( __( 'Invalid SaucerSwap API key. Please check and try again.', 'woocommerce-tokens-payment-gateway' ) );
+		}
+	}
+
 
 	/**
 	 * Save settings
@@ -794,18 +834,29 @@ class Gateway extends WC_Payment_Gateway {
 	 * @return array
 	 */
 	public function get_supported_tokens( $network = 'mainnet', $formatted = true ) {
+	  // Ensure settings are loaded
+	  $this->init_settings();
+
 		$transient_key = 'wctg_supported_tokens_' . $network;
 		$cached_tokens = get_transient( $transient_key );
 		if ( $cached_tokens ) {
 			//return $cached_tokens;
 		}
 
-		// Fetch tokens from SaucerSwap API
-		$endpoint = $network === 'testnet' ? 'https://test-api.saucerswap.finance/tokens' : 'https://api.saucerswap.finance/tokens';
-		$response = wp_remote_get( $endpoint );
-		if ( is_wp_error( $response ) || ! wp_remote_retrieve_body( $response ) ) {
-			return [];
-		}
+	  // Fetch tokens from SaucerSwap API
+	  $api_key = $this->get_option( 'saucerswap_api_key', '' );
+	  $endpoint = $network === 'testnet' ? 'https://test-api.saucerswap.finance/tokens' : 'https://api.saucerswap.finance/tokens';
+
+	  $response = wp_remote_get( $endpoint, [
+		  'headers' => [
+			  'x-api-key' => $api_key,
+		  ],
+		  'timeout' => 30,
+	  ] );
+
+	  if ( is_wp_error( $response ) || ! wp_remote_retrieve_body( $response ) ) {
+		  return [];
+	  }
 
 		$tokens = json_decode( wp_remote_retrieve_body( $response ), true );
 		$tokens = array_merge( [ 'hbar' => 'HBAR' ], $tokens );
@@ -817,13 +868,19 @@ class Gateway extends WC_Payment_Gateway {
 
 		$supported_tokens = [];
 		foreach ( $tokens as $token ) {
-			if ( ! is_array( $token ) && strtolower( $token ) === 'hbar' ) {
-				$supported_tokens['hbar'] = 'HBAR (' . ucfirst( $network ) . ')';
-				continue;
-			}
+		if ( ! is_array( $token ) ){
+      if ( strtolower( $token ) === 'hbar' ) {
+        $supported_tokens['hbar'] = 'HBAR (' . ucfirst( $network ) . ')';
+        continue;
+      }
 
-			$supported_tokens[ $token['id'] ] = $token['name'] . ' (' . $token['id'] . ' - ' . ucfirst( $network ) . ')';
-		}
+
+		  continue;
+	  }
+
+		$supported_tokens[ $token['id'] ] = $token['name'] . ' (' . $token['id'] . ' - ' . ucfirst( $network ) . ')';
+
+	}
 
 		return $supported_tokens;
 	}
